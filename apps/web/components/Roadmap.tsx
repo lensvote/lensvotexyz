@@ -56,7 +56,9 @@ const rightArrow = (
 export const Roadmap = () => {
   return (
     <div className="flex flex-col gap-4 max-w-5xl mx-auto mt-32">
-      <h2 className="capitalize font-bold text-[42px] text-center mb-8">Road Map</h2>
+      <h2 className="capitalize font-bold text-[42px] text-center mb-8">
+        Road Map
+      </h2>
 
       <div className="flex gap-4">
         <div className="rounded-lg border-2 border-[#6EE237] py-3 px-8">

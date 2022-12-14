@@ -8,6 +8,8 @@
     "lint": {
       "outputs": []
     },
+    "typecheck": { "outputs": [] },
+    "codegen": { "outputs": [] },
     "dev": {
       "cache": false
     }
