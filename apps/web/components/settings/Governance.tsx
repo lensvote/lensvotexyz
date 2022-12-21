@@ -8,7 +8,10 @@ import { parseUnits } from "ethers/lib/utils.js"
 
 const Governance = () => {
   const profileId = useAppPersistStore((state) => state.profileId)
-  console.log("🚀 ~ file: governance.tsx:11 ~ Governance ~ profileId", profileId)
+  console.log(
+    "🚀 ~ file: governance.tsx:11 ~ Governance ~ profileId",
+    profileId,
+  )
   // In millisecond
   const timelockDelay = 0
 
@@ -24,13 +27,12 @@ const Governance = () => {
     mode: "recklesslyUnprepared",
   })
 
-  console.log(profileId, writeData, writeLoading, error)
-
   const enableGovernance = useCallback(async () => {
-    const createGovernanceArgs = [profileId, timelockDelay]
+    const createGovernanceArgs = [profileId, timelockDelay] as const
 
     return createGovernor?.({
-      recklesslySetUnpreparedArgs: createGovernanceArgs,
+      // Cast it to any since this args is currently working, the inferred typing of wagmi is wrong
+      recklesslySetUnpreparedArgs: createGovernanceArgs as any,
       // recklesslySetUnpreparedOverrides: {
       //   gasLimit: parseUnits("150000"),
       // },
