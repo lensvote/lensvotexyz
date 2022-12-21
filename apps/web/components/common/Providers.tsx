@@ -6,10 +6,7 @@ import { WalletConnectConnector } from "wagmi/connectors/walletConnect"
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc"
 import { ApolloProvider } from "@apollo/client"
 import { client } from "../../apollo"
-import { CHAIN_ID, RPC_URL } from "../../data/constants"
-
-// TODO: Define and move it to constant
-const IS_MAINNET = true
+import { CHAIN_ID, IS_MAINNET, RPC_URL } from "../../data/constants"
 
 const { chains, provider } = configureChains(
   [IS_MAINNET ? polygon : polygonMumbai],

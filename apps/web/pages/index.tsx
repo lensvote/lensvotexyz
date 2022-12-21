@@ -1,7 +1,7 @@
 import { Hero } from "../components"
-import { Footer } from "@components/Footer"
-import { Features } from "../components/Features"
-import { Roadmap } from "../components/Roadmap"
+import { Footer } from "@components/shared/Footer"
+import { Features } from "../components/home/Features"
+import { Roadmap } from "../components/common/Roadmap"
 
 export default function Web() {
   return (

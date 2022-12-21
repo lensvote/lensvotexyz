@@ -23,6 +23,8 @@ export const SERVERLESS_SANDBOX_API_URL = "https://api-sandbox.lenster.xyz"
 
 export const API_URL = getEnvConfig().apiEndpoint
 export const LENSHUB_PROXY = getEnvConfig().lensHubProxyAddress
+export const LENSVOTE_GOVERNANCE_FACTORY =
+  getEnvConfig().governanceFactoryAddress
 
 export const IS_MAINNET = API_URL === MAINNET_API_URL
 
@@ -55,4 +57,4 @@ export const POLYGON_MUMBAI = {
   name: "Polygon Mumbai",
   rpcUrls: { default: "https://rpc-mumbai.maticvigil.com" },
 }
-export const CHAIN_ID = POLYGON_MAINNET.id
+export const CHAIN_ID = IS_MAINNET ? POLYGON_MAINNET.id : POLYGON_MUMBAI.id

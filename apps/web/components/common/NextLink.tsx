@@ -1,7 +1,7 @@
-import Link from "next/link"
+import { PropsWithChildren } from "react"
+import Link, { LinkProps } from "next/link"
+import clsx, { ClassValue } from "clsx"
 
-export const NextLink = ({ href, children, ...rest }: Record<string, any>) => (
-  <Link href={href} {...rest}>
-    {children}
-  </Link>
-)
+export const NextLink = (
+  props: PropsWithChildren<LinkProps & { className?: ClassValue }>,
+) => <Link {...props} className={clsx(props.className)} />

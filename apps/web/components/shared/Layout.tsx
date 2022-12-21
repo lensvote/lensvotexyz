@@ -1,7 +1,7 @@
 import React, { PropsWithChildren } from "react"
 import { ClickToComponent } from "click-to-react-component"
 import { Profile, useUserProfilesQuery } from "lens"
-import { Header } from "@components/Header"
+import { Header } from "@components/shared/Header"
 import { useAccount } from "wagmi"
 import { useAppStore, useAppPersistStore } from "@store/app"
 import { useRouter } from "next/router"
@@ -32,7 +32,6 @@ const Layout = ({ children }: PropsWithChildren) => {
         ?.sort((a, b) =>
           a.isDefault === b.isDefault ? 0 : a.isDefault ? -1 : 1,
         )
-      console.log("🚀 ~ file: Layout.tsx:30 ~ Layout ~ profiles", profiles)
 
       if (!profiles.length) {
         return resetAuthState()
@@ -50,7 +49,6 @@ const Layout = ({ children }: PropsWithChildren) => {
     },
   })
 
-  console.log("🚀 ~ file: Layout.tsx:56 ~ Layout ~ router", router)
   return (
     <>
       <Header isLandingPage={router.asPath === "/"} />

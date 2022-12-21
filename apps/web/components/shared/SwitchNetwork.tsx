@@ -1,8 +1,8 @@
-import { Button } from "@components/UI/Button"
-import { ArrowsRightLeftIcon } from "@heroicons/react/24/outline"
 import type { FC } from "react"
-import { CHAIN_ID } from "@data/constants"
 import { useSwitchNetwork } from "wagmi"
+import { ArrowsRightLeftIcon } from "@heroicons/react/24/outline"
+import { Button } from "@components/UI/Button"
+import { CHAIN_ID } from "@data/constants"
 
 interface Props {
   className?: string

@@ -1,5 +1,5 @@
 import React, { ComponentProps, ElementType } from "react"
-import LogoPng from "../assets/logo-green.png"
+import LogoPng from "../../assets/logo-green.png"
 
 type LogoProps = ComponentProps<"img"> & {
   text?: boolean
@@ -25,13 +25,13 @@ export const Logo = ({ text = true, ...props }: LogoProps) => {
             cy="9.15847"
             r="7.07929"
             stroke="black"
-            stroke-width="3.64078"
+            strokeWidth="3.64078"
           />
           <path
             d="M82.0726 6.09019L80.9262 7.23218C80.3722 7.78405 80.3705 8.68052 80.9224 9.23451L84.5962 12.9224C85.1496 13.4779 86.049 13.4779 86.6024 12.9224L94.6643 4.82961C95.2161 4.27563 95.2144 3.37916 94.6604 2.82729L93.5141 1.6853C92.9601 1.13343 92.0636 1.13514 91.5118 1.68913L85.5993 7.62426L84.0749 6.09402C83.523 5.54003 82.6265 5.53832 82.0726 6.09019Z"
             fill="#5BDE1D"
             stroke="white"
-            stroke-width="1.21359"
+            strokeWidth="1.21359"
           />
         </svg>
       </div>

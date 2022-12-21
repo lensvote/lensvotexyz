@@ -11,8 +11,8 @@ interface Props
   variant?: "primary" | "secondary" | "success" | "warning" | "super" | "danger"
   outline?: true
   light?: true
-  loading?: true
   rounded?: true
+  loading?: boolean
   icon?: ReactNode
   children?: ReactNode
   className?: string
@@ -38,7 +38,7 @@ export const Button = forwardRef<HTMLButtonElement, Props>(function Button(
       ref={ref}
       className={clsx(
         {
-          "bg-[#DCF06B] hover:bg-brand-600 border border-[#DCF06B] focus:ring-[#DCF06B]-400":
+          "bg-[#DCF06B] hover:bg-brand-600 border border-[#DCF06B] focus:ring-green-400":
             !outline && !light && variant === "primary",
           "bg-gray-500 hover:bg-gray-600 border border-gray-600 text-white focus:ring-gray-400":
             !outline && !light && variant === "secondary",
@@ -50,7 +50,7 @@ export const Button = forwardRef<HTMLButtonElement, Props>(function Button(
             !outline && !light && variant === "super",
           "bg-red-500 hover:bg-red-400 border border-red-600 text-white focus:ring-red-400":
             !outline && !light && variant === "danger",
-          "border-[.5px] border-[#939599] text-brand hover:bg-brand-100 focus:ring-brand-400":
+          "border-[.5px] border-[#939599] text-brand hover:bg-green-100 focus:ring-green-400":
             outline && !light && variant === "primary",
           "border border-gray-500 text-gray-500 hover:bg-gray-100 focus:ring-gray-400":
             outline && !light && variant === "secondary",
@@ -70,7 +70,7 @@ export const Button = forwardRef<HTMLButtonElement, Props>(function Button(
           "rounded-full": rounded,
           "rounded-sm": !rounded,
         },
-        "disabled:opacity-50 focus:ring-2 focus:ring-opacity-50 focus:ring-offset-1 outline-none",
+        "disabled:opacity-80 focus:ring-2 focus:ring-opacity-50 focus:ring-offset-1 outline-none",
         className,
       )}
       disabled={loading}

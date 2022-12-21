@@ -1,7 +1,7 @@
 import { useState } from "react"
 import type { FC } from "react"
 import WalletConnectors from "@components/shared/WalletConnectors"
-import { Logo } from "@components/Logo"
+import { Logo } from "@components/common/Logo"
 import { APP_NAME } from "@data/constants"
 
 const Login: FC = () => {

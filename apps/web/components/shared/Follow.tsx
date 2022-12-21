@@ -113,35 +113,45 @@ const Follow: FC<Props> = ({ profile, showText = false, setFollowing }) => {
       return
     }
 
-    if (profile?.followModule) {
-      createFollowTypedData({
-        variables: {
-          options: { overrideSigNonce: userSigNonce },
-          request: {
-            follow: [
-              {
-                profile: profile?.id,
-                followModule:
-                  profile?.followModule?.__typename ===
-                  "ProfileFollowModuleSettings"
-                    ? { profileFollowModule: { profileId: currentProfile?.id } }
-                    : null,
-              },
-            ],
+    createViaProxyAction({
+      request: {
+        follow: {
+          freeFollow: {
+            profileId: profile?.id,
           },
         },
-      })
-    } else {
-      createViaProxyAction({
-        request: {
-          follow: {
-            freeFollow: {
-              profileId: profile?.id,
-            },
-          },
-        },
-      })
-    }
+      },
+    })
+
+    // if (profile?.followModule) {
+    //   createFollowTypedData({
+    //     variables: {
+    //       options: { overrideSigNonce: userSigNonce },
+    //       request: {
+    //         follow: [
+    //           {
+    //             profile: profile?.id,
+    //             followModule:
+    //               profile?.followModule?.__typename ===
+    //               "ProfileFollowModuleSettings"
+    //                 ? { profileFollowModule: { profileId: currentProfile?.id } }
+    //                 : null,
+    //           },
+    //         ],
+    //       },
+    //     },
+    //   })
+    // } else {
+    //   createViaProxyAction({
+    //     request: {
+    //       follow: {
+    //         freeFollow: {
+    //           profileId: profile?.id,
+    //         },
+    //       },
+    //     },
+    //   })
+    // }
   }
 
   const isLoading =

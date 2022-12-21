@@ -1,13 +1,13 @@
-import clsx from "clsx"
 import type { FC } from "react"
+import clsx from "clsx"
 
-interface Props {
+type SpinnerProps = {
   className?: string
   variant?: "primary" | "secondary" | "success" | "warning" | "super" | "danger"
   size?: "xs" | "sm" | "md" | "lg"
 }
 
-export const Spinner: FC<Props> = ({
+export const Spinner: FC<SpinnerProps> = ({
   className = "",
   variant = "primary",
   size = "md",
@@ -16,7 +16,7 @@ export const Spinner: FC<Props> = ({
     <div
       className={clsx(
         {
-          "border-brand-200 border-t-brand-600": variant === "primary",
+          "border-yellow-100 border-t-[#DCF06B]": variant === "primary",
           "border-gray-200 border-t-gray-600": variant === "secondary",
           "border-green-200 border-t-green-600": variant === "success",
           "border-yellow-200 border-t-yellow-600": variant === "warning",
