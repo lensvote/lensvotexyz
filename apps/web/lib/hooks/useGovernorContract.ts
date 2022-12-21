@@ -51,8 +51,8 @@ const useUserGovernorContract = () => {
 }
 
 export enum ProposalVoteAction {
-  For,
   Against,
+  For,
   Abstain,
 }
 

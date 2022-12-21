@@ -1,12 +1,10 @@
-import { useRouter } from "next/router"
-import { ChevronLeftIcon } from "@heroicons/react/24/solid"
-import { FormProvider, useForm } from "react-hook-form"
-import { Button } from "@components/UI/Button"
-import { Card } from "@components/UI/Card"
 import { useState } from "react"
-import { Address, useBlockNumber, useContractWrite } from "wagmi"
-import { ProposeArgs, useUserGovernor } from "@lib/hooks/useGovernorContract"
+import { Address } from "wagmi"
+import { useForm } from "react-hook-form"
+import { useRouter } from "next/router"
 import { isAddress } from "ethers/lib/utils.js"
+import { Button } from "@components/UI/Button"
+import { ProposeArgs, useUserGovernor } from "@lib/hooks/useGovernorContract"
 
 enum ProposalAction {
   transferOne,
@@ -15,6 +13,8 @@ enum ProposalAction {
 // In seconds
 // TODO: Use a date library
 enum Duration {
+  threeMinutes = 60 * 3,
+  hour = 60 * 60,
   day = 60 * 60 * 24,
   week = 60 * 60 * 24 * 7,
   month = 60 * 60 * 24 * 7 * 30,
@@ -42,7 +42,7 @@ const CreateProposal = () => {
     defaultValues: {
       delay: 0,
       value: 0,
-      duration: Duration.day,
+      duration: Duration.threeMinutes,
       threshold: 1,
       action: ProposalAction.transferOne,
     },
@@ -246,6 +246,10 @@ const CreateProposal = () => {
                           className="block w-full max-w-lg rounded-md border-none shadow-sm focus:border-green-500 focus:ring-green-500 sm:max-w-xs sm:text-sm"
                           {...register("duration")}
                         >
+                          <option value={Duration.threeMinutes}>
+                            3 Minutes
+                          </option>
+                          <option value={Duration.hour}>Hour</option>
                           <option value={Duration.day}>Day</option>
                           <option value={Duration.week}>Week</option>
                           <option value={Duration.month}>Month</option>
