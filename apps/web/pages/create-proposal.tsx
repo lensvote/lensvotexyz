@@ -88,17 +88,7 @@ const CreateProposal = () => {
           threshold,
         ]
 
-        console.log(
-          "🚀 ~ file: create-proposal.tsx:76 ~ onSubmit ~ proposeArgs",
-          proposeArgs,
-          data,
-        )
-
         const latestProposalId = await createProposal(...proposeArgs)
-        console.log(
-          "🚀 ~ file: create-proposal.tsx:78 ~ onSubmit ~ latestProposalId",
-          latestProposalId,
-        )
       }
     }
   })
@@ -141,7 +131,7 @@ const CreateProposal = () => {
                           {...register("action")}
                         >
                           <option value={ProposalAction.transferOne}>
-                            Transfer ethers to a single address
+                            Transfer matics from treasury to a single address
                           </option>
                         </select>
 
@@ -164,11 +154,13 @@ const CreateProposal = () => {
                             htmlFor="value"
                             className="mt-2 block text-xs font-medium text-gray-500"
                           >
-                            Amount of ethers
+                            Amount of matics
                           </label>
                           <input
-                            type="number"
                             id="value"
+                            type="number"
+                            step={0.01}
+                            min={0}
                             placeholder="Amount of ethers to transfer to"
                             className="mt-2 block w-full max-w-lg rounded-md border-none shadow-sm focus:border-green-500 focus:ring-green-500 sm:max-w-xs sm:text-sm"
                             {...register("value")}

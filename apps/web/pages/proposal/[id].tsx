@@ -11,10 +11,11 @@ const ProposalDetail = () => {
   // TODO: use id to get a proposal detail, we're now unable to do it because of unfinished graphql api
   const { id } = query
 
-  const { latestProposal: userProposal } = useUserGovernor()
+  const { latestProposal: userProposal, latestProposalActions } =
+    useUserGovernor()
 
   // TODO: Return skeleton
-  if (!userProposal) {
+  if (!userProposal || !latestProposalActions) {
     return <div className="bg-[#F4F5F6] h-[80vh] p-3" />
   }
 
@@ -28,7 +29,10 @@ const ProposalDetail = () => {
             <VoteCard />
           </div>
           <div className="col-span-1 space-y-4">
-            <ProposalDetailCard proposal={userProposal} />
+            <ProposalDetailCard
+              proposal={userProposal}
+              actions={latestProposalActions}
+            />
             <ExtraActionsCard id={userProposal.id} />
           </div>
         </div>

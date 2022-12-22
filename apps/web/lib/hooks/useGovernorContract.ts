@@ -1,12 +1,6 @@
 import { useEffect, useState } from "react"
 import { BigNumber, BigNumberish } from "ethers"
-import {
-  Address,
-  useAccount,
-  useContract,
-  useContractRead,
-  useSigner,
-} from "wagmi"
+import { Address, useAccount, useContract, useSigner } from "wagmi"
 import { GovernanceFactory, Governor } from "abis"
 import { LENSVOTE_GOVERNANCE_FACTORY } from "@data/index"
 import { useAppPersistStore } from "@store/app"
@@ -27,6 +21,12 @@ const useUserGovernorContract = () => {
   const currentProfileId = useAppPersistStore((state) => state.profileId)
   const factoryContract = useGovernorFactoryContract()
   const [governorAddress, setGovernorAddress] = useState<Address>()
+  const [timelockAddress, setTimelockAddress] = useState<Address>()
+  const governorContract = useContract({
+    address: governorAddress,
+    abi: Governor,
+    signerOrProvider: data,
+  })
 
   useEffect(() => {
     if (!factoryContract || !currentProfileId) {
@@ -34,7 +34,7 @@ const useUserGovernorContract = () => {
     }
 
     ;(async () => {
-      const address = await factoryContract?.getGovAddr?.(
+      const address = await factoryContract.getGovAddr(
         BigNumber.from(currentProfileId),
       )
       if (address) {
@@ -43,11 +43,24 @@ const useUserGovernorContract = () => {
     })()
   }, [currentProfileId, factoryContract])
 
-  return useContract({
-    address: governorAddress,
-    abi: Governor,
-    signerOrProvider: data,
-  })
+  useEffect(() => {
+    if (!governorContract) {
+      return
+    }
+
+    ;(async () => {
+      const timelockAddress = await governorContract.admin()
+      if (timelockAddress) {
+        setTimelockAddress(timelockAddress)
+      }
+    })()
+  }, [governorContract])
+
+  return {
+    governorContract,
+    governorAddress,
+    timelockAddress,
+  }
 }
 
 export enum ProposalVoteAction {
@@ -104,10 +117,27 @@ export type ProposeArgs = [
   number,
 ]
 
+export type ProposalActions = [
+  // Targets
+  Address[],
+  // Values
+  BigNumberish[],
+  // Signatures
+  string[],
+  // Calldatas
+  Address[],
+]
+
 export const useUserGovernor = () => {
   const { address } = useAccount()
-  const userGovernorContract = useUserGovernorContract()
+  const {
+    governorContract: userGovernorContract,
+    timelockAddress,
+    governorAddress,
+  } = useUserGovernorContract()
   const [latestProposal, setLatestProposal] = useState<GovernorProposal>()
+  const [latestProposalActions, setLatestProposalActions] =
+    useState<ProposalActions>()
 
   // get latest proposal
   useEffect(() => {
@@ -132,7 +162,13 @@ export const useUserGovernor = () => {
         startBlock,
       } = await userGovernorContract.proposals(proposalId)
       const latestProposalState = await userGovernorContract.state(proposalId)
+      const latestProposalActions = await userGovernorContract.getActions(
+        proposalId,
+      )
 
+      setLatestProposalActions(
+        latestProposalActions as unknown as ProposalActions,
+      )
       setLatestProposal({
         abstainVotes,
         againstVotes,
@@ -177,12 +213,12 @@ export const useUserGovernor = () => {
   }
 
   const executeProposal = async (id: BigNumberish) => {
-    if (!userGovernorContract) {
+    if (!userGovernorContract || !latestProposalActions) {
       return
     }
     // TODO: Add value argument for transfer action
     const tx = await userGovernorContract.execute(BigNumber.from(id), {
-      value: 0,
+      value: BigNumber.from(latestProposalActions[1][0]),
     })
     return tx
   }
@@ -203,8 +239,13 @@ export const useUserGovernor = () => {
 
   return {
     latestProposal,
+    latestProposalActions,
     createProposal,
     cancelProposal,
     voteProposal,
+    queueProposal,
+    executeProposal,
+    timelockAddress,
+    governorAddress,
   }
 }

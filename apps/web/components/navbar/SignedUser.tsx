@@ -63,7 +63,7 @@ const SignedUser = () => {
       >
         <Menu.Items className="py-2 absolute z-10 right-0 mt-2 w-32 origin-top-right rounded-md bg-white border-[#EFF4F4] border shadow-[0px_4px_12px_-7px_#00000040] ring-1 ring-black ring-opacity-5 focus:outline-none">
           {/* Setting */}
-          <div className="px-2">
+          {/* <div className="px-2">
             <Menu.Item>
               {({ active }) => (
                 <NextLink href="setting">
@@ -78,7 +78,7 @@ const SignedUser = () => {
                 </NextLink>
               )}
             </Menu.Item>
-          </div>
+          </div> */}
 
           {/* Sign out */}
           <div className="px-2">

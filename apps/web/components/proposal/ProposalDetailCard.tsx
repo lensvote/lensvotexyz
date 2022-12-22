@@ -1,19 +1,21 @@
-import { useBlockNumber, useProvider } from "wagmi"
+import { useProvider } from "wagmi"
 import { Card } from "@components/UI/Card"
-import { GovernorProposal } from "@lib/hooks/useGovernorContract"
+import {
+  GovernorProposal,
+  ProposalActions,
+} from "@lib/hooks/useGovernorContract"
 import { useEffect, useState } from "react"
-import { formatDate } from "@lib/formats"
+import { formatDate, formatNumber } from "@lib/formats"
 
 type ProposalDetailCardProps = {
   proposal: GovernorProposal
+  actions: ProposalActions
 }
 
-const ProposalDetailCard = ({ proposal }: ProposalDetailCardProps) => {
+const ProposalDetailCard = ({ proposal, actions }: ProposalDetailCardProps) => {
   const { startBlock, endBlock } = proposal
-  console.log(
-    "🚀 ~ file: ProposalDetailCard.tsx:13 ~ ProposalDetailCard ~ startBlock",
-    startBlock.toString(),
-  )
+  // There is only one action right now
+  const [transferTarget, transferAmount] = actions.map((acts) => acts[0])
   const provider = useProvider()
   // Formatted time string
   const [{ startTime, endTime }, setTimes] = useState<{
@@ -61,6 +63,18 @@ const ProposalDetailCard = ({ proposal }: ProposalDetailCardProps) => {
               <p className="text-[#090909]">{endTime}</p>
             </div>
           )}
+          <div className="flex flex-wrap justify-between text-sm capitalize">
+            <p className="text-[#868A8F]">Target</p>
+            <p className="text-[#090909] flex-1 text-right break-all ml-8">
+              {transferTarget.toString()}
+            </p>
+          </div>
+          <div className="flex justify-between text-sm capitalize">
+            <p className="text-[#868A8F]">Amount</p>
+            <p className="text-[#090909]">
+              {formatNumber(Number(transferAmount.toString()))}
+            </p>
+          </div>
         </div>
       </div>
     </Card>

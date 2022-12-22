@@ -21,6 +21,7 @@ export const Header = ({ isLandingPage }: HeaderProps) => {
           <span className="sr-only">LensVote</span>
           <Logo />
         </NextLink>
+
         {isLandingPage ? (
           <NextLink href="/app">
             <Button variant="success" rounded>
@@ -28,7 +29,10 @@ export const Header = ({ isLandingPage }: HeaderProps) => {
             </Button>
           </NextLink>
         ) : (
-          <User />
+          <div className="flex items-center gap-5">
+            <NextLink href="/governance">Governance</NextLink>
+            <User />
+          </div>
         )}
       </div>
     </div>

@@ -79,7 +79,6 @@ const WalletSelector: FC<Props> = ({ setHasConnected, setHasProfile }) => {
       const { data: profilesData } = await getProfiles({
         variables: { ownedBy: address },
       })
-      console.log("🚀 ~ file: WalletConnectors.tsx:82 ~ handleSign ~ profilesData", profilesData)
 
       if (profilesData?.profiles?.items?.length === 0) {
         setHasProfile(false)
