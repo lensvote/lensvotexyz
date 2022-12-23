@@ -1,7 +1,8 @@
 import type { ApolloCache } from "@apollo/client"
 import { Button } from "@components/UI/Button"
 import { Spinner } from "@components/UI/Spinner"
-import { UserPlusIcon } from "@heroicons/react/24/outline"
+import { UserPlusIcon } from "@heroicons/react/24/solid"
+import clsx, { ClassValue } from "clsx"
 import { omit } from "@lib/omit"
 import { LensHubProxy } from "abis"
 import useBroadcast from "@lib/hooks/useBroadcast"
@@ -17,9 +18,15 @@ interface Props {
   profile: Profile
   setFollowing: Dispatch<boolean>
   showText?: boolean
+  className?: ClassValue
 }
 
-const Follow: FC<Props> = ({ profile, showText = false, setFollowing }) => {
+const Follow: FC<Props> = ({
+  profile,
+  showText = false,
+  setFollowing,
+  className,
+}) => {
   const userSigNonce = useAppStore((state) => state.userSigNonce)
   const setUserSigNonce = useAppStore((state) => state.setUserSigNonce)
   const currentProfile = useAppStore((state) => state.currentProfile)
@@ -123,35 +130,35 @@ const Follow: FC<Props> = ({ profile, showText = false, setFollowing }) => {
       },
     })
 
-    // if (profile?.followModule) {
-    //   createFollowTypedData({
-    //     variables: {
-    //       options: { overrideSigNonce: userSigNonce },
-    //       request: {
-    //         follow: [
-    //           {
-    //             profile: profile?.id,
-    //             followModule:
-    //               profile?.followModule?.__typename ===
-    //               "ProfileFollowModuleSettings"
-    //                 ? { profileFollowModule: { profileId: currentProfile?.id } }
-    //                 : null,
-    //           },
-    //         ],
-    //       },
-    //     },
-    //   })
-    // } else {
-    //   createViaProxyAction({
-    //     request: {
-    //       follow: {
-    //         freeFollow: {
-    //           profileId: profile?.id,
-    //         },
-    //       },
-    //     },
-    //   })
-    // }
+    if (profile?.followModule) {
+      createFollowTypedData({
+        variables: {
+          options: { overrideSigNonce: userSigNonce },
+          request: {
+            follow: [
+              {
+                profile: profile?.id,
+                followModule:
+                  profile?.followModule?.__typename ===
+                  "ProfileFollowModuleSettings"
+                    ? { profileFollowModule: { profileId: currentProfile?.id } }
+                    : null,
+              },
+            ],
+          },
+        },
+      })
+    } else {
+      createViaProxyAction({
+        request: {
+          follow: {
+            freeFollow: {
+              profileId: profile?.id,
+            },
+          },
+        },
+      })
+    }
   }
 
   const isLoading =
@@ -163,20 +170,13 @@ const Follow: FC<Props> = ({ profile, showText = false, setFollowing }) => {
 
   return (
     <Button
-      className="text-sm !px-3 !py-1.5"
+      className={clsx("text-sm !px-3 !py-1.5", className)}
+      rounded
       size="sm"
-      outline
       onClick={createFollow}
-      variant="success"
       aria-label="Follow"
       disabled={isLoading}
-      icon={
-        isLoading ? (
-          <Spinner variant="success" size="xs" />
-        ) : (
-          <UserPlusIcon className="w-4 h-4" />
-        )
-      }
+      icon={isLoading && <Spinner variant="secondary" size="xs" />}
     >
       {showText && "Follow"}
     </Button>

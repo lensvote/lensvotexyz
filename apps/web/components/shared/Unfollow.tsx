@@ -4,6 +4,7 @@ import { ethers, Signer } from "ethers"
 import { Contract } from "ethers"
 import { useSigner, useSignTypedData } from "wagmi"
 import { UserMinusIcon } from "@heroicons/react/24/outline"
+import clsx, { ClassValue } from "clsx"
 
 import { Button } from "@components/UI/Button"
 import { Spinner } from "@components/UI/Spinner"
@@ -19,9 +20,15 @@ interface Props {
   profile: Profile
   setFollowing: Dispatch<boolean>
   showText?: boolean
+  className?: ClassValue
 }
 
-const Unfollow: FC<Props> = ({ profile, showText = false, setFollowing }) => {
+const Unfollow: FC<Props> = ({
+  profile,
+  showText = false,
+  setFollowing,
+  className,
+}) => {
   const currentProfile = useAppStore((state) => state.currentProfile)
   const [writeLoading, setWriteLoading] = useState(false)
   const { isLoading: signLoading, signTypedDataAsync } = useSignTypedData()
@@ -94,18 +101,16 @@ const Unfollow: FC<Props> = ({ profile, showText = false, setFollowing }) => {
 
   return (
     <Button
-      className="text-sm !px-3 !py-1.5"
+      className={clsx("text-sm !px-3 !py-1.5", className)}
+      rounded
       size="sm"
       outline
       onClick={createUnfollow}
       disabled={typedDataLoading || signLoading || writeLoading}
-      variant="danger"
       aria-label="Unfollow"
       icon={
-        typedDataLoading || signLoading || writeLoading ? (
-          <Spinner variant="danger" size="xs" />
-        ) : (
-          <UserMinusIcon className="w-4 h-4" />
+        (typedDataLoading || signLoading || writeLoading) && (
+          <Spinner variant="secondary" size="xs" />
         )
       }
     >
