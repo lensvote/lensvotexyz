@@ -1,4 +1,3 @@
-import { useState } from "react"
 import { Address } from "wagmi"
 import { useForm } from "react-hook-form"
 import { useRouter } from "next/router"
@@ -23,7 +22,7 @@ enum Duration {
 type ProposalFormData = {
   action: ProposalAction
   address?: Address
-  value?: number
+  value?: string
   description: string
   delay: number
   duration: Duration
@@ -37,11 +36,11 @@ const CreateProposal = () => {
   }
 
   const { createProposal } = useUserGovernor()
-  const [isCreatingProposal, setIsCreatingProposal] = useState()
+  // const [isCreatingProposal, setIsCreatingProposal] = useState()
   const { register, ...proposalForm } = useForm<ProposalFormData>({
     defaultValues: {
       delay: 0,
-      value: 0,
+      value: "0",
       duration: Duration.threeMinutes,
       threshold: 1,
       action: ProposalAction.transferOne,
@@ -96,11 +95,6 @@ const CreateProposal = () => {
   return (
     <div className="bg-[#F4F5F6]">
       <div className="flex justify-center">
-        {/* <div className="px-4 mr-12">
-          <div className="cursor-pointer" onClick={goBack}>
-            <ChevronLeftIcon className="text-white w-12 h-12" />
-          </div>
-        </div> */}
 
         <div className="max-w-4xl">
           <div className="flex pt-6 pb-32">
@@ -158,7 +152,7 @@ const CreateProposal = () => {
                           </label>
                           <input
                             id="value"
-                            type="number"
+                            type="string"
                             step={0.01}
                             min={0}
                             placeholder="Amount of ethers to transfer to"
