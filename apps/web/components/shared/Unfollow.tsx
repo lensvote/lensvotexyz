@@ -3,7 +3,6 @@ import type { Dispatch, FC } from "react"
 import { ethers, Signer } from "ethers"
 import { Contract } from "ethers"
 import { useSigner, useSignTypedData } from "wagmi"
-import { UserMinusIcon } from "@heroicons/react/24/outline"
 import clsx, { ClassValue } from "clsx"
 
 import { Button } from "@components/UI/Button"
@@ -15,6 +14,7 @@ import { FollowNFT } from "abis"
 import { RELAY_ON } from "data/constants"
 import type { CreateBurnEip712TypedData, Profile } from "lens"
 import { useCreateUnfollowTypedDataMutation } from "lens"
+import { ApolloCache } from "@apollo/client"
 
 interface Props {
   profile: Profile
@@ -33,6 +33,15 @@ const Unfollow: FC<Props> = ({
   const [writeLoading, setWriteLoading] = useState(false)
   const { isLoading: signLoading, signTypedDataAsync } = useSignTypedData()
   const { data: signer } = useSigner()
+
+  const updateCache = (cache: ApolloCache<any>) => {
+    cache.modify({
+      id: `Profile:${profile?.id}`,
+      fields: {
+        isFollowedByMe: () => false,
+      },
+    })
+  }
 
   const burnWithSig = async (
     signature: string,
@@ -84,6 +93,7 @@ const Unfollow: FC<Props> = ({
           }
         } catch {}
       },
+      update: updateCache,
     })
 
   const createUnfollow = () => {

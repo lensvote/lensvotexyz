@@ -1,7 +1,6 @@
 import type { ApolloCache } from "@apollo/client"
 import { Button } from "@components/UI/Button"
 import { Spinner } from "@components/UI/Spinner"
-import { UserPlusIcon } from "@heroicons/react/24/solid"
 import clsx, { ClassValue } from "clsx"
 import { omit } from "@lib/omit"
 import { LensHubProxy } from "abis"

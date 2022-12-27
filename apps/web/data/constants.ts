@@ -46,7 +46,9 @@ export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 export const LENSPROTOCOL_HANDLE = "lensprotocol"
 export const HANDLE_SUFFIX = IS_MAINNET ? ".lens" : ".test"
 
-export const RPC_URL = "https://rpc.ankr.com/polygon"
+export const RPC_URL = IS_MAINNET
+  ? "https://rpc.ankr.com/polygon"
+  : "https://rpc.ankr.com/polygon_mumbai"
 export const POLYGON_MAINNET = {
   ...polygon,
   name: "Polygon Mainnet",

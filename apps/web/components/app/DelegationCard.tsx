@@ -1,4 +1,6 @@
 import { useState } from "react"
+import { useBlockNumber, useContractRead } from "wagmi"
+import { BigNumber } from "ethers"
 import Jazzicon, { jsNumberForAddress } from "react-jazzicon"
 import { Profile, useProfileQuery } from "lens"
 import { Card } from "@components/UI/Card"
@@ -8,6 +10,7 @@ import { useAppStore } from "@store/app"
 import Follow from "@components/shared/Follow"
 import Unfollow from "@components/shared/Unfollow"
 import { useDebounce } from "@lib/hooks/useDebounce"
+import { FollowNFT } from "abis"
 
 const FollowResultCard = ({ profile }: { profile: Profile }) => {
   const avatarUri: string =
@@ -79,15 +82,18 @@ const DelegationCard = () => {
   })
   const profile = data?.profile as Profile | undefined
   // The delegation power current user has
-  // Hardcoded since getPowerByBlockNumber throws a unknown error
-  const delegationPower = profile?.isFollowedByMe ? 1 : 0
-  // const { data: blockNumber } = useBlockNumber()
-  // const { data: delegationPower, error } = useContractRead({
-  //   abi: FollowNFT,
-  //   address: profile?.followNftAddress,
-  //   functionName: "getPowerByBlockNumber",
-  //   args: [currentProfile?.ownedBy, 29950921 - 1000],
-  // })
+  // Hardcoded version
+  // const delegationPower = profile?.isFollowedByMe ? 1 : 0
+  const { data: blockNumber } = useBlockNumber()
+  const { data: delegationPower } = useContractRead({
+    abi: FollowNFT,
+    address: profile?.followNftAddress,
+    functionName: "getPowerByBlockNumber",
+    args:
+      currentProfile && blockNumber
+        ? [currentProfile.ownedBy, BigNumber.from(blockNumber)]
+        : undefined,
+  })
 
   return (
     <Card>
@@ -105,7 +111,9 @@ const DelegationCard = () => {
 
         <div>
           <h4 className="font-semibold">Voting power</h4>
-          <p className="text-[#090909] text-sm">{delegationPower}</p>
+          <p className="text-[#090909] text-sm">
+            {delegationPower?.toString() ?? 0}
+          </p>
         </div>
 
         <div className="space-y-1">
