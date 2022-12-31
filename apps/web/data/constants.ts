@@ -25,6 +25,7 @@ export const API_URL = getEnvConfig().apiEndpoint
 export const LENSHUB_PROXY = getEnvConfig().lensHubProxyAddress
 export const LENSVOTE_GOVERNANCE_FACTORY =
   getEnvConfig().governanceFactoryAddress
+export const DUMMY_TOKEN_ADDRESS = getEnvConfig().dummyTokenAddress
 
 export const IS_MAINNET = API_URL === MAINNET_API_URL
 

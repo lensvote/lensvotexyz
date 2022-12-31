@@ -23,6 +23,7 @@ import {
   TESTNET_LENSHUB_PROXY,
   TESTNET_UPDATE_OWNABLE_FEE_COLLECT_MODULE_ADDRESS,
   TESTNET_GOVERNANCE_FACTORY_ADDRESS,
+  TESTNET_DUMMY_TOKEN,
 } from "./addresses"
 
 const getEnvConfig = () => {
@@ -36,7 +37,9 @@ const getEnvConfig = () => {
         defaultCollectToken: MAINNET_DEFAULT_TOKEN,
         UpdateOwnableFeeCollectModuleAddress:
           MAINNET_UPDATE_OWNABLE_FEE_COLLECT_MODULE_ADDRESS,
+        // We only have testnet address by now
         governanceFactoryAddress: TESTNET_GOVERNANCE_FACTORY_ADDRESS,
+        dummyTokenAddress: TESTNET_DUMMY_TOKEN,
       }
     case "testnet":
       return {
@@ -48,6 +51,7 @@ const getEnvConfig = () => {
         UpdateOwnableFeeCollectModuleAddress:
           TESTNET_UPDATE_OWNABLE_FEE_COLLECT_MODULE_ADDRESS,
         governanceFactoryAddress: TESTNET_GOVERNANCE_FACTORY_ADDRESS,
+        dummyTokenAddress: TESTNET_DUMMY_TOKEN,
       }
     case "staging":
       return {

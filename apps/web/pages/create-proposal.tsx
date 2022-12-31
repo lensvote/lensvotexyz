@@ -1,12 +1,13 @@
 import { Address } from "wagmi"
 import { useForm } from "react-hook-form"
-import { useRouter } from "next/router"
-import { isAddress } from "ethers/lib/utils.js"
+import { defaultAbiCoder, isAddress, parseEther } from "ethers/lib/utils.js"
 import { Button } from "@components/UI/Button"
 import { ProposeArgs, useUserGovernor } from "@lib/hooks/useGovernorContract"
+import { DUMMY_TOKEN_ADDRESS } from "@data/index"
 
 enum ProposalAction {
-  transferOne,
+  // transferNativeTokensToSingle,
+  transferErc20ToSingle,
 }
 
 // In seconds
@@ -30,11 +31,6 @@ type ProposalFormData = {
 }
 
 const CreateProposal = () => {
-  const router = useRouter()
-  const goBack = () => {
-    router.back()
-  }
-
   const { createProposal } = useUserGovernor()
   // const [isCreatingProposal, setIsCreatingProposal] = useState()
   const { register, ...proposalForm } = useForm<ProposalFormData>({
@@ -43,16 +39,16 @@ const CreateProposal = () => {
       value: "0",
       duration: Duration.threeMinutes,
       threshold: 1,
-      action: ProposalAction.transferOne,
+      action: ProposalAction.transferErc20ToSingle,
     },
   })
+
   const onSubmit = proposalForm.handleSubmit(async (data) => {
     // Validations
     // TODO: with user interaction
-    if (!data.address || typeof data.value === "undefined") {
+    if (!data.address) {
       throw `Required data missing:
       address - ${data.address}
-      value - ${data.value}
       `
     }
 
@@ -61,9 +57,57 @@ const CreateProposal = () => {
     }
 
     switch (Number(data.action)) {
-      case ProposalAction.transferOne: {
-        const address = data.address.trim() as Address
+      // case ProposalAction.transferNativeTokensToSingle: {
+      //   if (typeof data.value === "undefined") {
+      //     throw `Required data missing:
+      //     value - ${data.value}
+      //     `
+      //   }
 
+      //   const address = data.address.trim() as Address
+      //   const BLOCK_TIME_PER_SECOND = 2
+      //   // transform to block number
+      //   const delay = Number(data.delay) / BLOCK_TIME_PER_SECOND
+      //   // transform to block number
+      //   const duration = Number(data.duration) / BLOCK_TIME_PER_SECOND
+      //   const threshold = Number(data.threshold)
+
+      //   const targets = [address]
+      //   const values = [parseEther(data.value)]
+      //   const signatures = [0]
+      //   const calldatas = [0]
+
+      //   // this is like payable(msg.send).transfer(value)
+      //   // const signatures = ["transfer(uint256)"]
+      //   // const calldata = defaultAbiCoder.encode(
+      //   //   ["uint256"],
+      //   //   [
+      //   //     // amount,
+      //   //     parseEther("0.00001"),
+      //   //   ],
+      //   // )
+      //   // const calldatas = [calldata]
+
+      //   const proposeArgs: ProposeArgs = [
+      //     targets,
+      //     values,
+      //     signatures,
+      //     calldatas,
+      //     data.description,
+      //     duration,
+      //     delay,
+      //     threshold,
+      //   ]
+
+      //   const latestProposalId = await createProposal(...proposeArgs)
+      // }
+
+      case ProposalAction.transferErc20ToSingle: {
+        if (!DUMMY_TOKEN_ADDRESS) {
+          return
+        }
+
+        const address = data.address.trim() as Address
         const BLOCK_TIME_PER_SECOND = 2
         // transform to block number
         const delay = Number(data.delay) / BLOCK_TIME_PER_SECOND
@@ -71,11 +115,19 @@ const CreateProposal = () => {
         const duration = Number(data.duration) / BLOCK_TIME_PER_SECOND
         const threshold = Number(data.threshold)
 
-        const targets = [address]
-        const values = [Number(data.value)]
-        const signatures = [0]
-        const calldatas = [0]
-
+        const targets = [DUMMY_TOKEN_ADDRESS]
+        const values = [0]
+        const signatures = ["transfer(address,uint256)"]
+        const calldata = defaultAbiCoder.encode(
+          ["address", "uint256"],
+          [
+            // Address
+            address,
+            // amount,
+            parseEther(data.value ?? "0"),
+          ],
+        )
+        const calldatas = [calldata]
         const proposeArgs: ProposeArgs = [
           targets,
           values,
@@ -95,7 +147,6 @@ const CreateProposal = () => {
   return (
     <div className="bg-[#F4F5F6]">
       <div className="flex justify-center">
-
         <div className="max-w-4xl">
           <div className="flex pt-6 pb-32">
             <form className="space-y-8" onSubmit={onSubmit}>
@@ -121,13 +172,27 @@ const CreateProposal = () => {
                         <select
                           id="action"
                           className="mt-1 block w-full rounded-md border-none py-2 pl-3 pr-10 text-base focus:border-green-500 focus:outline-none focus:ring-green-500 sm:text-sm"
-                          defaultValue={ProposalAction.transferOne}
                           {...register("action")}
                         >
-                          <option value={ProposalAction.transferOne}>
+                          {/* <option
+                            value={ProposalAction.transferNativeTokensToSingle}
+                          >
                             Transfer matics from treasury to a single address
+                          </option> */}
+                          <option value={ProposalAction.transferErc20ToSingle}>
+                            Transfer LINKs from treasury to a single address
                           </option>
                         </select>
+
+                        <a
+                          href="https://faucet.polygon.technology"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <p className="text-blue-400 text-sm py-2">
+                            Get LINK from Faucet
+                          </p>
+                        </a>
 
                         <div className="pt-2">
                           <label
@@ -137,8 +202,8 @@ const CreateProposal = () => {
                             The address you would want to send to
                           </label>
                           <input
-                            type="text"
                             id="address"
+                            type="text"
                             autoComplete="address"
                             placeholder="address 0x..."
                             className="mt-2 block w-full max-w-lg rounded-md border-none shadow-sm focus:border-green-500 focus:ring-green-500 sm:max-w-xs sm:text-sm"
@@ -148,11 +213,11 @@ const CreateProposal = () => {
                             htmlFor="value"
                             className="mt-2 block text-xs font-medium text-gray-500"
                           >
-                            Amount of matics
+                            Amount of LINK tokens
                           </label>
                           <input
                             id="value"
-                            type="string"
+                            type="text"
                             step={0.01}
                             min={0}
                             placeholder="Amount of ethers to transfer to"
@@ -254,7 +319,7 @@ const CreateProposal = () => {
                         <input
                           type="number"
                           id="threshold"
-                          min={1}
+                          min={0}
                           autoComplete="given-name"
                           className="block w-full max-w-lg rounded-md border-none shadow-sm focus:border-green-500 focus:ring-green-500 sm:max-w-xs sm:text-sm"
                           {...register("threshold")}
