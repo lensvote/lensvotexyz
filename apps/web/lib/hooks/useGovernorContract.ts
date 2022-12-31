@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { BigNumber, BigNumberish } from "ethers"
 import { Address, useAccount, useContract, useSigner } from "wagmi"
 import { GovernanceFactory, Governor } from "abis"
-import { LENSVOTE_GOVERNANCE_FACTORY } from "@data/index"
+import { LENSVOTE_GOVERNANCE_FACTORY, ZERO_ADDRESS } from "@data/index"
 import { useAppPersistStore } from "@store/app"
 
 const useGovernorFactoryContract = () => {
@@ -37,7 +37,8 @@ const useUserGovernorContract = () => {
       const address = await factoryContract.getGovAddr(
         BigNumber.from(currentProfileId),
       )
-      if (address) {
+      // It could be zero addr somehow
+      if (address && address !== ZERO_ADDRESS) {
         setGovernorAddress(address)
       }
     })()
@@ -147,6 +148,10 @@ export const useUserGovernor = () => {
 
     ;(async () => {
       const proposalId = await userGovernorContract.latestProposalIds(address)
+      if (proposalId.eq(0)) {
+        return
+      }
+
       const {
         abstainVotes,
         againstVotes,
@@ -216,11 +221,17 @@ export const useUserGovernor = () => {
     if (!userGovernorContract || !latestProposalActions) {
       return
     }
-    // TODO: Add value argument for transfer action
-    const tx = await userGovernorContract.execute(BigNumber.from(id), {
-      value: BigNumber.from(latestProposalActions[1][0]),
-    })
-    return tx
+    try {
+      const tx = await userGovernorContract.execute(BigNumber.from(id), {
+        value: BigNumber.from(latestProposalActions[1][0]),
+      })
+      return tx
+    } catch (error) {
+      console.log(
+        "🚀 ~ file: useGovernorContract.ts:232 ~ executeProposal ~ error",
+        error,
+      )
+    }
   }
 
   const voteProposal = async (

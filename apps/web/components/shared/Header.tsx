@@ -29,11 +29,7 @@ export const Header = ({ isLandingPage }: HeaderProps) => {
             </Button>
           </NextLink>
         ) : (
-          <div className="flex items-center gap-6">
-            <NextLink href="/governance">Governance</NextLink>
-            <NextLink href="/create-proposal">Create Proposal</NextLink>
-            <User />
-          </div>
+          <User />
         )}
       </div>
     </div>

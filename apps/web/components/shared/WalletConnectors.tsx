@@ -16,7 +16,6 @@ import { useState } from "react"
 import { useAppPersistStore, useAppStore } from "@store/app"
 import type { Connector } from "wagmi"
 import { useAccount, useConnect, useNetwork, useSignMessage } from "wagmi"
-import { Logo } from "@components/common/Logo"
 
 interface Props {
   setHasConnected: Dispatch<boolean>

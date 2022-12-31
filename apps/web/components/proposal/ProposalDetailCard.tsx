@@ -5,7 +5,8 @@ import {
   ProposalActions,
 } from "@lib/hooks/useGovernorContract"
 import { useEffect, useState } from "react"
-import { formatDate, formatNumber } from "@lib/formats"
+import { formatDate } from "@lib/formats"
+import { formatEther } from "ethers/lib/utils.js"
 
 type ProposalDetailCardProps = {
   proposal: GovernorProposal
@@ -72,7 +73,7 @@ const ProposalDetailCard = ({ proposal, actions }: ProposalDetailCardProps) => {
           <div className="flex justify-between text-sm capitalize">
             <p className="text-[#868A8F]">Amount</p>
             <p className="text-[#090909]">
-              {formatNumber(Number(transferAmount.toString()))}
+              {formatEther(transferAmount.toString())}
             </p>
           </div>
         </div>

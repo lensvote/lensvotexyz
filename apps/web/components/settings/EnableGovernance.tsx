@@ -60,20 +60,20 @@ const EnableGovernance = () => {
           </div>
         )}
 
-        {timelockAddress && (
-          <div className="mt-8">
-            <p className="block text-sm font-medium text-gray-700 capitalize">
-              Your Timelock Address
-            </p>
-            <span className="text-gray-600 text-xs">{timelockAddress}</span>
-          </div>
-        )}
         {governorAddress && (
           <div>
             <p className="block text-sm font-medium text-gray-700 capitalize">
               Your Governance Address
             </p>
             <span className="text-gray-600 text-xs">{governorAddress}</span>
+          </div>
+        )}
+        {timelockAddress && (
+          <div className="mt-8">
+            <p className="block text-sm font-medium text-gray-700 capitalize">
+              Your Timelock Address
+            </p>
+            <span className="text-gray-600 text-xs">{timelockAddress}</span>
           </div>
         )}
 
@@ -109,7 +109,7 @@ const EnableGovernance = () => {
             onClick={enableGovernance}
             disabled={isEnablingGovernor}
             loading={isEnablingGovernor}
-            icon={isEnablingGovernor && <Spinner />}
+            icon={isEnablingGovernor && <Spinner size="sm" />}
           >
             Enable Governance
           </Button>

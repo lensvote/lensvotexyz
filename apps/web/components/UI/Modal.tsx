@@ -3,9 +3,8 @@ import { XMarkIcon } from "@heroicons/react/24/outline"
 import clsx from "clsx"
 import type { FC, ReactNode } from "react"
 import { Fragment } from "react"
-import { Card } from "./Card"
 
-interface Props {
+export type ModalProps = {
   icon?: ReactNode
   title: ReactNode
   size?: "sm" | "md" | "lg"
@@ -14,7 +13,7 @@ interface Props {
   onClose?: () => void
 }
 
-export const Modal: FC<Props> = ({
+export const Modal: FC<ModalProps> = ({
   icon,
   title,
   size = "sm",
@@ -39,7 +38,7 @@ export const Modal: FC<Props> = ({
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <Dialog.Overlay className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+            <Dialog.Overlay className="fixed inset-0 bg-[#090909] bg-opacity-10 backdrop-blur-[2px] transition-opacity" />
           </Transition.Child>
           <span
             className="hidden sm:inline-block sm:h-screen sm:align-middle"
@@ -59,7 +58,7 @@ export const Modal: FC<Props> = ({
                 { "sm:max-w-5xl": size === "lg" },
                 { "sm:max-w-3xl": size === "md" },
                 { "sm:max-w-lg": size === "sm" },
-                "inline-block align-bottom bg-white text-left shadow-xl transform transition-all sm:my-8 sm:align-middle w-full rounded-xl",
+                "inline-block align-bottom bg-white text-left transform transition-all sm:my-8 sm:align-middle w-full rounded-xl",
               )}
             >
               <div className="flex justify-between items-center py-3.5 px-5 divider">
