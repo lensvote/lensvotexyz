@@ -2,7 +2,8 @@ import { useState } from "react"
 import type { FC } from "react"
 import WalletConnectors from "@components/shared/WalletConnectors"
 import { Logo } from "@components/common/Logo"
-import { APP_NAME } from "@data/constants"
+import { APP_NAME, IS_MAINNET } from "@data/constants"
+import NewProfile from "@components/login/NewProfile"
 
 const Login: FC = () => {
   const [hasConnected, setHasConnected] = useState(false)
@@ -34,7 +35,7 @@ const Login: FC = () => {
             setHasProfile={setHasProfile}
           />
         </div>
-      ) : (
+      ) : IS_MAINNET ? (
         <div className="mb-2 space-y-4">
           <div className="w-20 h-20 rounded-full">
             <Logo text={false} />
@@ -58,6 +59,8 @@ const Login: FC = () => {
             </div>
           </div>
         </div>
+      ) : (
+        <NewProfile isModal />
       )}
     </div>
   )
