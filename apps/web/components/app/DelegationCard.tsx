@@ -11,6 +11,9 @@ import Follow from "@components/shared/Follow"
 import Unfollow from "@components/shared/Unfollow"
 import { useDebounce } from "@lib/hooks/useDebounce"
 import { FollowNFT } from "abis"
+import { Button } from "@components/UI/Button"
+import { Modal } from "@components/UI/Modal"
+import Delegation from "./Delegation"
 
 const FollowResultCard = ({ profile }: { profile: Profile }) => {
   const avatarUri: string =
@@ -95,42 +98,73 @@ const DelegationCard = () => {
         : undefined,
   })
 
+  const [isDelegating, setIsDelegating] = useState(true)
+  const handleDelegate = () => {
+    if (!profile) {
+      return
+    }
+
+    setIsDelegating(true)
+  }
+
   return (
-    <Card>
-      <div className="py-4 px-3 space-y-4">
-        <div className="space-y-2">
-          <h4 className="font-semibold">Who you want vote for</h4>
-          <input
-            type="text"
-            className="w-full bg-[#F4F4F4] rounded border-none"
-            value={query}
-            onChange={(evt) => setQuery(evt.target.value)}
-          />
-          {profile && currentProfile && <FollowResultCard profile={profile} />}
-        </div>
+    <>
+      <Card>
+        <div className="py-4 px-3 space-y-4">
+          <div className="space-y-2">
+            <h4 className="font-semibold">Who you want vote for</h4>
+            <input
+              type="text"
+              className="w-full bg-[#F4F4F4] rounded border-none"
+              value={query}
+              onChange={(evt) => setQuery(evt.target.value)}
+            />
+            {profile && currentProfile && (
+              <FollowResultCard profile={profile} />
+            )}
+          </div>
 
-        <div>
-          <h4 className="font-semibold">Voting power</h4>
-          <p className="text-[#090909] text-sm">
-            {delegationPower?.toString() ?? 0}
-          </p>
-        </div>
-
-        <div className="space-y-1">
-          <h4 className="font-semibold">how to get voting power</h4>
-          <div className="text-[#18191C] text-sm">
-            <p>
-              <span className="font-semibold">Step1:</span> follow this person
-              and get at least one followerNFT
-            </p>
-            <p>
-              <span className="font-semibold">Step2:</span> Delegate your voting
-              power to an address(this address can be yourself or a third party)
+          <div>
+            <h4 className="font-semibold">Voting power</h4>
+            <p className="text-[#090909] text-sm">
+              {delegationPower?.toString() ?? 0}
             </p>
           </div>
+
+          <div className="space-y-1">
+            <h4 className="font-semibold">how to get voting power</h4>
+            <div className="text-[#18191C] text-sm">
+              <p>
+                <span className="font-semibold">Step1:</span> Follow this person
+                and get at least one followerNFT
+              </p>
+              <p>
+                <span className="font-semibold">Step2:</span> Delegate your
+                voting power to an address(this address can be yourself or a
+                third party)
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <Button disabled={!profile} onClick={handleDelegate}>
+              Delegate
+            </Button>
+          </div>
         </div>
-      </div>
-    </Card>
+      </Card>
+
+      <Modal
+        title="Delegation"
+        show={isDelegating}
+        onClose={() => setIsDelegating(false)}
+      >
+        <Delegation
+          delegateTo={currentProfile?.ownedBy}
+          followNFTAddress={profile?.followNftAddress}
+        />
+      </Modal>
+    </>
   )
 }
 
