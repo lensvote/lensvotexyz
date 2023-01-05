@@ -98,7 +98,7 @@ const DelegationCard = () => {
         : undefined,
   })
 
-  const [isDelegating, setIsDelegating] = useState(true)
+  const [isDelegating, setIsDelegating] = useState(false)
   const handleDelegate = () => {
     if (!profile) {
       return
