@@ -10,7 +10,7 @@ import {
 import { RetryLink } from "@apollo/client/link/retry"
 import axios from "axios"
 import { parseJwt } from "@lib/parseJwt"
-import { API_URL, LV_KEYS } from "@data/constants"
+import { API_URL, LENSVOTE_API_URL, LV_KEYS } from "@data/constants"
 import result from "lens"
 
 const REFRESH_AUTHENTICATION_MUTATION = `
@@ -24,6 +24,12 @@ const REFRESH_AUTHENTICATION_MUTATION = `
 
 const httpLink = new HttpLink({
   uri: API_URL,
+  fetchOptions: "no-cors",
+  fetch,
+})
+
+const lensvoteHttpLink = new HttpLink({
+  uri: LENSVOTE_API_URL,
   fetchOptions: "no-cors",
   fetch,
 })
@@ -102,7 +108,15 @@ const cache = new InMemoryCache({
 })
 
 export const client = new ApolloClient({
-  link: from([retryLink, authLink, httpLink]),
+  link: ApolloLink.split(
+    (operation) => {
+      // If no clientName specify, use lens api otherwise we use lensvote on thegraph
+      return !operation.getContext().clientName
+    },
+    from([retryLink, authLink, httpLink]),
+    // Fallback
+    lensvoteHttpLink,
+  ),
   cache,
 })
 

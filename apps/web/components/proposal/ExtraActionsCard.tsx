@@ -1,12 +1,12 @@
 import { useState } from "react"
-import { BigNumber } from "ethers"
+import { BigNumberish } from "ethers"
 import { Button } from "@components/UI/Button"
 import { Card } from "@components/UI/Card"
 import { Spinner } from "@components/UI/Spinner"
 import { useUserGovernor } from "@lib/hooks/useGovernorContract"
 
 type ExtraActionsCardProps = {
-  id: BigNumber
+  id: BigNumberish
 }
 
 // extra actions like cancel / queue / execute

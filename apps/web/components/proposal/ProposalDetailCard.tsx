@@ -7,6 +7,7 @@ import {
 import { useEffect, useState } from "react"
 import { formatDate } from "@lib/formats"
 import { formatEther } from "ethers/lib/utils.js"
+import { BigNumber } from "ethers"
 
 type ProposalDetailCardProps = {
   proposal: GovernorProposal
@@ -34,10 +35,18 @@ const ProposalDetailCard = ({ proposal, actions }: ProposalDetailCardProps) => {
       const currentBlockNumber = await provider.getBlockNumber()
       const startBlockTimestamp =
         currentTime +
-        startBlock.sub(currentBlockNumber).div(2).mul(1000).toNumber()
+        BigNumber.from(startBlock)
+          .sub(currentBlockNumber)
+          .div(2)
+          .mul(1000)
+          .toNumber()
       const endBlockTimestamp =
         currentTime +
-        endBlock.sub(currentBlockNumber).div(2).mul(1000).toNumber()
+        BigNumber.from(endBlock)
+          .sub(currentBlockNumber)
+          .div(2)
+          .mul(1000)
+          .toNumber()
 
       setTimes({
         startTime: formatDate(startBlockTimestamp),

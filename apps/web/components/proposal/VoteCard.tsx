@@ -2,24 +2,31 @@ import { Button } from "@components/UI/Button"
 import { Card } from "@components/UI/Card"
 import { Spinner } from "@components/UI/Spinner"
 import {
+  GovernorProposal,
   ProposalVoteAction,
   useUserGovernor,
 } from "@lib/hooks/useGovernorContract"
 import { useState } from "react"
 
-const VoteCard = () => {
-  const { latestProposal, voteProposal } = useUserGovernor()
+export type VoteCardProps = {
+  proposal: GovernorProposal
+}
+
+const VoteCard = ({ proposal }: VoteCardProps) => {
+  const { voteProposal } = useUserGovernor(proposal.gov.id)
   const [votingAction, setVotingAction] = useState<ProposalVoteAction>()
   const [isVoting, setIsVoting] = useState(false)
 
   const handleVote = async (action: ProposalVoteAction) => {
-    if (!latestProposal) {
+    if (!proposal) {
       return
     }
+    const [voteId] = proposal.id.split("|")
+    console.log("🚀 ~ file: VoteCard.tsx:25 ~ handleVote ~ voteId", voteId)
     try {
       setVotingAction(action)
       setIsVoting(true)
-      const tx = await voteProposal(latestProposal?.id, action)
+      const tx = await voteProposal(voteId, action)
       await tx?.wait()
     } catch (error) {
       console.log(error)

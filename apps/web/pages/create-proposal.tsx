@@ -1,13 +1,15 @@
-import { Address } from "wagmi"
+import { useState } from "react"
 import { useForm } from "react-hook-form"
+import type { Address } from "wagmi"
 import { defaultAbiCoder, isAddress, parseEther } from "ethers/lib/utils.js"
 import { Button } from "@components/UI/Button"
 import { ProposeArgs, useUserGovernor } from "@lib/hooks/useGovernorContract"
-import { DUMMY_TOKEN_ADDRESS } from "@data/index"
+import { DUMMY_TOKEN_ADDRESS, ZERO_ADDRESS } from "@data/index"
 
 enum ProposalAction {
   // transferNativeTokensToSingle,
   transferErc20ToSingle,
+  transferZeroEthers,
 }
 
 // In seconds
@@ -39,25 +41,31 @@ const CreateProposal = () => {
       value: "0",
       duration: Duration.threeMinutes,
       threshold: 1,
-      action: ProposalAction.transferErc20ToSingle,
+      action: ProposalAction.transferZeroEthers,
     },
   })
+  const [action, setAction] = useState<ProposalAction>(
+    proposalForm.getValues().action,
+  )
 
   const onSubmit = proposalForm.handleSubmit(async (data) => {
-    // Validations
-    // TODO: with user interaction
-    if (!data.address) {
-      throw `Required data missing:
-      address - ${data.address}
-      `
-    }
-
-    if (!isAddress(data.address.trim())) {
-      throw "Address provided is not an actual address"
-    }
-
-    switch (Number(data.action)) {
+    const selectedAction = Number(data.action)
+    console.log(
+      "🚀 ~ file: create-proposal.tsx:53 ~ onSubmit ~ data.action",
+      selectedAction,
+      ProposalAction.transferZeroEthers,
+    )
+    switch (selectedAction) {
       // case ProposalAction.transferNativeTokensToSingle: {
+      // if (!data.address) {
+      //   throw `Required data missing:
+      //   address - ${data.address}
+      //   `
+      // }
+
+      // if (!isAddress(data.address.trim())) {
+      //   throw "Address provided is not an actual address"
+      // }
       //   if (typeof data.value === "undefined") {
       //     throw `Required data missing:
       //     value - ${data.value}
@@ -102,12 +110,73 @@ const CreateProposal = () => {
       //   const latestProposalId = await createProposal(...proposeArgs)
       // }
 
+      case ProposalAction.transferZeroEthers: {
+        const address = ZERO_ADDRESS as Address
+        const BLOCK_TIME_PER_SECOND = 2
+        // transform to block number
+        const delay = Number(data.delay) / BLOCK_TIME_PER_SECOND
+        // transform to block number
+        const duration = Number(data.duration) / BLOCK_TIME_PER_SECOND
+        const threshold = Number(data.threshold)
+
+        const targets = [address]
+        const values = [0]
+        const signatures = [0]
+        const calldatas = [0]
+
+        // this is like payable(msg.send).transfer(value)
+        // const signatures = ["transfer(uint256)"]
+        // const calldata = defaultAbiCoder.encode(
+        //   ["uint256"],
+        //   [
+        //     // amount,
+        //     parseEther("0.00001"),
+        //   ],
+        // )
+        // const calldatas = [calldata]
+
+        const proposeArgs: ProposeArgs = [
+          targets,
+          values,
+          signatures,
+          calldatas,
+          data.description,
+          duration,
+          delay,
+          threshold,
+        ]
+
+        const latestProposalId = await createProposal(...proposeArgs)
+        console.log(
+          "🚀 ~ file: Proposal created, id - ",
+          latestProposalId,
+        )
+        return
+      }
+
       case ProposalAction.transferErc20ToSingle: {
         if (!DUMMY_TOKEN_ADDRESS) {
           return
         }
 
-        const address = data.address.trim() as Address
+        // TODO: with user interaction
+        if (!data.address) {
+          throw `Required data missing:
+            address - ${data.address}
+          `
+        }
+
+        if (!isAddress(data.address.trim())) {
+          throw "Address provided is not an actual address"
+        }
+
+        if (typeof data.value === "undefined") {
+          throw `Required data missing:
+            value - ${data.value}
+            `
+        }
+
+        const address = data.address?.trim() as Address
         const BLOCK_TIME_PER_SECOND = 2
         // transform to block number
         const delay = Number(data.delay) / BLOCK_TIME_PER_SECOND
@@ -140,6 +209,11 @@ const CreateProposal = () => {
         ]
 
         const latestProposalId = await createProposal(...proposeArgs)
+        console.log(
+          "🚀 ~ file: Proposal created, id - ",
+          latestProposalId,
+        )
+        return
       }
     }
   })
@@ -172,59 +246,71 @@ const CreateProposal = () => {
                         <select
                           id="action"
                           className="mt-1 block w-full rounded-md border-none py-2 pl-3 pr-10 text-base focus:border-green-500 focus:outline-none focus:ring-green-500 sm:text-sm"
-                          {...register("action")}
+                          {...register("action", {
+                            onChange(event) {
+                              setAction(event.target.value)
+                            },
+                          })}
                         >
                           {/* <option
                             value={ProposalAction.transferNativeTokensToSingle}
                           >
                             Transfer matics from treasury to a single address
                           </option> */}
+                          <option value={ProposalAction.transferZeroEthers}>
+                            Transfer 0 MATICs
+                          </option>
                           <option value={ProposalAction.transferErc20ToSingle}>
                             Transfer LINKs from treasury to a single address
                           </option>
                         </select>
 
-                        <a
-                          href="https://faucet.polygon.technology"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <p className="text-blue-400 text-sm py-2">
-                            Get LINK from Faucet
-                          </p>
-                        </a>
+                        {Number(action) ===
+                          ProposalAction.transferErc20ToSingle && (
+                          <>
+                            <a
+                              href="https://faucet.polygon.technology"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <p className="text-blue-400 text-sm py-2">
+                                Get LINK from Faucet
+                              </p>
+                            </a>
 
-                        <div className="pt-2">
-                          <label
-                            htmlFor="address"
-                            className="mt-2 block text-xs font-medium text-gray-500"
-                          >
-                            The address you would want to send to
-                          </label>
-                          <input
-                            id="address"
-                            type="text"
-                            autoComplete="address"
-                            placeholder="address 0x..."
-                            className="mt-2 block w-full max-w-lg rounded-md border-none shadow-sm focus:border-green-500 focus:ring-green-500 sm:max-w-xs sm:text-sm"
-                            {...register("address")}
-                          />
-                          <label
-                            htmlFor="value"
-                            className="mt-2 block text-xs font-medium text-gray-500"
-                          >
-                            Amount of LINK tokens
-                          </label>
-                          <input
-                            id="value"
-                            type="text"
-                            step={0.01}
-                            min={0}
-                            placeholder="Amount of ethers to transfer to"
-                            className="mt-2 block w-full max-w-lg rounded-md border-none shadow-sm focus:border-green-500 focus:ring-green-500 sm:max-w-xs sm:text-sm"
-                            {...register("value")}
-                          />
-                        </div>
+                            <div className="pt-2">
+                              <label
+                                htmlFor="address"
+                                className="mt-2 block text-xs font-medium text-gray-500"
+                              >
+                                The address you would want to send to
+                              </label>
+                              <input
+                                id="address"
+                                type="text"
+                                autoComplete="address"
+                                placeholder="address 0x..."
+                                className="mt-2 block w-full max-w-lg rounded-md border-none shadow-sm focus:border-green-500 focus:ring-green-500 sm:max-w-xs sm:text-sm"
+                                {...register("address")}
+                              />
+                              <label
+                                htmlFor="value"
+                                className="mt-2 block text-xs font-medium text-gray-500"
+                              >
+                                Amount of LINK tokens
+                              </label>
+                              <input
+                                id="value"
+                                type="text"
+                                step={0.01}
+                                min={0}
+                                placeholder="Amount of ethers to transfer to"
+                                className="mt-2 block w-full max-w-lg rounded-md border-none shadow-sm focus:border-green-500 focus:ring-green-500 sm:max-w-xs sm:text-sm"
+                                {...register("value")}
+                              />
+                            </div>
+                          </>
+                        )}
                       </div>
                     </div>
                     {/* Describe */}

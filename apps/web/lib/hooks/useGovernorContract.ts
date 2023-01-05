@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react"
-import { BigNumber, BigNumberish } from "ethers"
+import { BigNumber, BigNumberish, Bytes } from "ethers"
 import { Address, useAccount, useContract, useSigner } from "wagmi"
 import { GovernanceFactory, Governor } from "abis"
 import { LENSVOTE_GOVERNANCE_FACTORY, ZERO_ADDRESS } from "@data/index"
 import { useAppPersistStore } from "@store/app"
+import { isAddress } from "ethers/lib/utils.js"
 
 const useGovernorFactoryContract = () => {
   const { data: signer } = useSigner()
@@ -16,20 +17,26 @@ const useGovernorFactoryContract = () => {
   return governorFactoryContract
 }
 
-const useUserGovernorContract = () => {
+const useUserGovernorContract = (governorContractAddress?: Address) => {
   const { data } = useSigner()
   const currentProfileId = useAppPersistStore((state) => state.profileId)
   const factoryContract = useGovernorFactoryContract()
-  const [governorAddress, setGovernorAddress] = useState<Address>()
+  const [governorAddress, setGovernorAddress] = useState<Address | undefined>(
+    governorContractAddress,
+  )
   const [timelockAddress, setTimelockAddress] = useState<Address>()
   const governorContract = useContract({
-    address: governorAddress,
+    address: governorContractAddress ?? governorAddress,
     abi: Governor,
     signerOrProvider: data,
   })
 
   useEffect(() => {
-    if (!factoryContract || !currentProfileId) {
+    if (
+      !factoryContract ||
+      !currentProfileId ||
+      isAddress(governorContractAddress ?? "")
+    ) {
       return
     }
 
@@ -42,7 +49,7 @@ const useUserGovernorContract = () => {
         setGovernorAddress(address)
       }
     })()
-  }, [currentProfileId, factoryContract])
+  }, [currentProfileId, factoryContract, governorContractAddress])
 
   useEffect(() => {
     if (!governorContract) {
@@ -71,33 +78,42 @@ export enum ProposalVoteAction {
 }
 
 export enum ProposalState {
-  pending,
-  active,
-  canceled,
-  defeated,
-  succeeded,
-  queued,
-  expired,
-  executed,
+  Pending,
+  Active,
+  Canceled,
+  Defeated,
+  Succeeded,
+  Queued,
+  Expired,
+  Executed,
 }
 
-export type GovernorProposal = {
+export type Proposer = {
+  id: Address
+}
+
+export type GovernorProposal = Readonly<{
   // number that +1 start from 1
-  id: BigNumber
-  proposer: string
-  forVotes: BigNumber
-  abstainVotes: BigNumber
-  againstVotes: BigNumber
+  id: `${string}|${Address}`
+  proposer: Proposer
+  gov: { id: Address }
+  agreeVotes: BigNumberish
+  // forVotes: BigNumberish
+  abstainVotes: BigNumberish
+  againstVotes: BigNumberish
   description: string
-  startBlock: BigNumber
-  endBlock: BigNumber
-  //
-  eta: BigNumber
+  startBlock: BigNumberish
+  endBlock: BigNumberish
+  eta: BigNumberish
   canceled: boolean
   executed: boolean
-  quorumVotes: BigNumber
-  state: ProposalState
-}
+  quorumVotes: BigNumberish
+  status: string
+  targets: ProposalActions[0]
+  values: ProposalActions[1]
+  signatures: ProposalActions[2]
+  calldatas: ProposalActions[3]
+}>
 
 export type ProposeArgs = [
   // Targets
@@ -126,16 +142,16 @@ export type ProposalActions = [
   // Signatures
   string[],
   // Calldatas
-  Address[],
+  Bytes[],
 ]
 
-export const useUserGovernor = () => {
+export const useUserGovernor = (governorContractAddress?: Address) => {
   const { address } = useAccount()
   const {
     governorContract: userGovernorContract,
     timelockAddress,
     governorAddress,
-  } = useUserGovernorContract()
+  } = useUserGovernorContract(governorContractAddress)
   const [latestProposal, setLatestProposal] = useState<GovernorProposal>()
   const [latestProposalActions, setLatestProposalActions] =
     useState<ProposalActions>()
@@ -174,6 +190,7 @@ export const useUserGovernor = () => {
       setLatestProposalActions(
         latestProposalActions as unknown as ProposalActions,
       )
+      const [targets, values, signatures, calldatas] = latestProposalActions
       setLatestProposal({
         abstainVotes,
         againstVotes,
@@ -182,12 +199,20 @@ export const useUserGovernor = () => {
         endBlock,
         eta,
         executed,
-        forVotes,
-        id,
-        proposer,
+        agreeVotes: forVotes,
+        id: `${id}|${address}`,
+        proposer: { id: proposer },
         quorumVotes,
         startBlock,
-        state: latestProposalState,
+        status: ProposalState[latestProposalState],
+        // @ts-expect-error
+        targets,
+        // @ts-expect-error
+        values,
+        // @ts-expect-error
+        signatures,
+        // @ts-expect-error
+        calldatas,
       })
     })()
   }, [address, userGovernorContract])

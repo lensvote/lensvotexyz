@@ -7,6 +7,8 @@ export const IS_PRODUCTION = process.env.NODE_ENV === "production"
 // Lens Network
 export const LENS_NETWORK = process.env.NEXT_PUBLIC_LENS_NETWORK ?? "mainnet"
 export const MAINNET_API_URL = "https://api.lens.dev"
+export const LENSVOTE_TESTNET_API_URL =
+  "https://api.thegraph.com/subgraphs/name/wonderfulfull/lensvote"
 export const TESTNET_API_URL = "https://api-mumbai.lens.dev"
 export const SANDBOX_API_URL = "https://api-sandbox-mumbai.lens.dev"
 export const STAGING_API_URL =
@@ -22,6 +24,7 @@ export const SERVERLESS_STAGING_SANDBOX_API_URL =
 export const SERVERLESS_SANDBOX_API_URL = "https://api-sandbox.lenster.xyz"
 
 export const API_URL = getEnvConfig().apiEndpoint
+export const LENSVOTE_API_URL = getEnvConfig().lensvoteApiEndpoint
 export const LENSHUB_PROXY = getEnvConfig().lensHubProxyAddress
 export const LENSVOTE_GOVERNANCE_FACTORY =
   getEnvConfig().governanceFactoryAddress
