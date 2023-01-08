@@ -25,7 +25,7 @@ export const SANDBOX_LENS_PERIPHERY: Address =
 // TODO: add mainnet address
 // Mumbai
 export const TESTNET_GOVERNANCE_FACTORY_ADDRESS: Address =
-  "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+  "0xe7079257430b2B28232E10e2774027E52E802145"
 
 // LINK token
 export const TESTNET_DUMMY_TOKEN: Address =
