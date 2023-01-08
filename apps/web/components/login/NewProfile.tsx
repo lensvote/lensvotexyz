@@ -10,13 +10,14 @@ import Pending from "./Pending"
 
 interface NewProfileProps {
   isModal?: boolean
+  onNext: () => void
 }
 
 type NewProfileFormData = {
   handle: string
 }
 
-const NewProfile: FC<NewProfileProps> = ({ isModal = false }) => {
+const NewProfile: FC<NewProfileProps> = ({ isModal = false, onNext }) => {
   const [createProfile, { data, loading }] = useCreateProfileMutation()
 
   const form = useForm<NewProfileFormData>()
@@ -33,10 +34,7 @@ const NewProfile: FC<NewProfileProps> = ({ isModal = false }) => {
 
   return data?.createProfile.__typename === "RelayerResult" &&
     data?.createProfile.txHash ? (
-    <Pending
-      handle={form.getValues("handle")}
-      txHash={data?.createProfile?.txHash}
-    />
+    <Pending txHash={data?.createProfile?.txHash} onNext={onNext} />
   ) : (
     <form className="space-y-4" onSubmit={onSubmit}>
       {data?.createProfile.__typename === "RelayError" &&
@@ -46,7 +44,10 @@ const NewProfile: FC<NewProfileProps> = ({ isModal = false }) => {
       {isModal && (
         <div className="mb-2 space-y-4">
           <Logo text={false} className="w-14 h-14" />
-          <div className="text-xl font-bold">You need to get a Lens profile NFT on testnet before using {APP_NAME}</div>
+          <div className="text-xl font-bold">
+            You need to get a Lens profile NFT on testnet before using{" "}
+            {APP_NAME}
+          </div>
         </div>
       )}
       <div className="space-y-1">

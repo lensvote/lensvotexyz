@@ -1,11 +1,14 @@
 import { useState } from "react"
-import type { FC } from "react"
 import WalletConnectors from "@components/shared/WalletConnectors"
 import { Logo } from "@components/common/Logo"
 import { APP_NAME, IS_MAINNET } from "@data/constants"
 import NewProfile from "@components/login/NewProfile"
 
-const Login: FC = () => {
+type LoginProps = {
+  onNext: () => void
+}
+
+const Login = ({ onNext }: LoginProps) => {
   const [hasConnected, setHasConnected] = useState(false)
   const [hasProfile, setHasProfile] = useState(true)
 
@@ -60,7 +63,7 @@ const Login: FC = () => {
           </div>
         </div>
       ) : (
-        <NewProfile isModal />
+        <NewProfile isModal onNext={onNext} />
       )}
     </div>
   )

@@ -6,18 +6,20 @@ import React, { useState } from "react"
 const LoginButton = () => {
   const [showLoginModal, setShowLoginModal] = useState(false)
 
+  const closeModal = () => setShowLoginModal(false)
+
   return (
     <>
       <Modal
         title="Login"
         show={showLoginModal}
-        onClose={() => setShowLoginModal(false)}
+        onClose={closeModal}
       >
-        <Login />
+        <Login onNext={closeModal} />
       </Modal>
       <Button
         className="text-sm"
-        onClick={() => setShowLoginModal(true)}
+        onClick={closeModal}
       >
         Login
       </Button>
