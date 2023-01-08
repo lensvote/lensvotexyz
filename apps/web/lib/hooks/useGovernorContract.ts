@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { BigNumber, BigNumberish, Bytes } from "ethers"
 import { Address, useAccount, useContract, useSigner } from "wagmi"
 import { GovernanceFactory, Governor } from "abis"
@@ -31,7 +31,7 @@ const useUserGovernorContract = (governorContractAddress?: Address) => {
     signerOrProvider: data,
   })
 
-  useEffect(() => {
+  const syncGovernorAddress = useCallback(async () => {
     if (
       !factoryContract ||
       !currentProfileId ||
@@ -40,16 +40,18 @@ const useUserGovernorContract = (governorContractAddress?: Address) => {
       return
     }
 
-    ;(async () => {
-      const address = await factoryContract.getGovAddr(
-        BigNumber.from(currentProfileId),
-      )
-      // It could be zero addr somehow
-      if (address && address !== ZERO_ADDRESS) {
-        setGovernorAddress(address)
-      }
-    })()
+    const address = await factoryContract.getGovAddr(
+      BigNumber.from(currentProfileId),
+    )
+    // It could be zero addr somehow
+    if (address && address !== ZERO_ADDRESS) {
+      setGovernorAddress(address)
+    }
   }, [currentProfileId, factoryContract, governorContractAddress])
+
+  useEffect(() => {
+    syncGovernorAddress()
+  }, [syncGovernorAddress])
 
   useEffect(() => {
     if (!governorContract) {
@@ -68,6 +70,7 @@ const useUserGovernorContract = (governorContractAddress?: Address) => {
     governorContract,
     governorAddress,
     timelockAddress,
+    syncGovernorAddress,
   }
 }
 
@@ -151,6 +154,7 @@ export const useUserGovernor = (governorContractAddress?: Address) => {
     governorContract: userGovernorContract,
     timelockAddress,
     governorAddress,
+    syncGovernorAddress,
   } = useUserGovernorContract(governorContractAddress)
   const [latestProposal, setLatestProposal] = useState<GovernorProposal>()
   const [latestProposalActions, setLatestProposalActions] =
@@ -283,5 +287,6 @@ export const useUserGovernor = (governorContractAddress?: Address) => {
     executeProposal,
     timelockAddress,
     governorAddress,
+    refetch: syncGovernorAddress,
   }
 }

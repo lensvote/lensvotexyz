@@ -23,6 +23,11 @@ const NewProfile: FC<NewProfileProps> = ({ isModal = false, onNext }) => {
   const form = useForm<NewProfileFormData>()
   const onSubmit = form.handleSubmit(({ handle }) => {
     const username = handle.toLowerCase()
+
+    if (username.length < 5 || username.length > 31) {
+      throw `Handle only supports lower case characters, numbers, - and _. Handle must be minimum of 5 length and maximum of 31 length - ${username}`
+    }
+
     createProfile({
       variables: {
         request: {
@@ -60,8 +65,10 @@ const NewProfile: FC<NewProfileProps> = ({ isModal = false, onNext }) => {
         <input
           type="text"
           placeholder="gavin"
-          required
           className="block w-full max-w-lg rounded-md shadow-sm focus:border-green-500 focus:ring-green-500 sm:max-w-xs sm:text-sm"
+          minLength={5}
+          maxLength={31}
+          required
           {...form.register("handle")}
         />
       </div>

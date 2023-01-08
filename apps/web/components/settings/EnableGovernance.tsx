@@ -1,37 +1,48 @@
-import { useCallback } from "react"
+import { useCallback, useState } from "react"
 import { useContractWrite } from "wagmi"
 import { InformationCircleIcon } from "@heroicons/react/20/solid"
-import { parseEther } from "ethers/lib/utils.js"
 import { Button } from "@components/UI/Button"
 import { LENSVOTE_GOVERNANCE_FACTORY } from "@data/index"
 import { useAppPersistStore } from "@store/app"
 import { Spinner } from "@components/UI/Spinner"
 import { GovernanceFactory } from "abis"
 import { useUserGovernor } from "@lib/hooks/useGovernorContract"
+import { BigNumber } from "ethers"
 
 const EnableGovernance = () => {
   const profileId = useAppPersistStore((state) => state.profileId)
-  const { timelockAddress, governorAddress } = useUserGovernor()
+  const { timelockAddress, governorAddress, refetch } = useUserGovernor()
   // In millisecond
   const timelockDelay = 0
 
-  const { isLoading: isEnablingGovernor, write: createGovernor } =
-    useContractWrite({
-      address: LENSVOTE_GOVERNANCE_FACTORY,
-      abi: GovernanceFactory,
-      functionName: "createGovernor",
-      mode: "recklesslyUnprepared",
-    })
+  const { writeAsync: createGovernor } = useContractWrite({
+    address: LENSVOTE_GOVERNANCE_FACTORY,
+    abi: GovernanceFactory,
+    functionName: "createGovernor",
+    mode: "recklesslyUnprepared",
+  })
+
+  const [isEnablingGovernor, setIsEnablingGovernor] = useState(false)
 
   const enableGovernance = useCallback(async () => {
-    const createGovernanceArgs = [profileId, timelockDelay] as const
-    return createGovernor?.({
-      // Cast it to any since this args is currently working, the inferred typing of wagmi is wrong
-      recklesslySetUnpreparedArgs: createGovernanceArgs as any,
-      recklesslySetUnpreparedOverrides: {
-        gasLimit: parseEther("150000"),
-      },
-    })
+    if (!createGovernor) {
+      return
+    }
+
+    try {
+      setIsEnablingGovernor(true)
+      const createGovernanceArgs = [profileId, timelockDelay] as const
+      const createGovernorResult = await createGovernor({
+        // Cast it to any since this args is currently working, the inferred typing of wagmi is wrong
+        recklesslySetUnpreparedArgs: createGovernanceArgs as any,
+        recklesslySetUnpreparedOverrides: {
+          gasLimit: BigNumber.from(33333333),
+        },
+      })
+      await createGovernorResult.wait()
+    } finally {
+      setIsEnablingGovernor(false)
+    }
   }, [createGovernor, profileId])
 
   return (

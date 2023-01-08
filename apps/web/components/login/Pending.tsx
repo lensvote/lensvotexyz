@@ -15,11 +15,14 @@ const Pending: FC<Props> = ({ txHash, onNext }) => {
     pollInterval: 1000,
   })
 
+  const isLoading =
+    loading ||
+    (data?.hasTxHashBeenIndexed.__typename === "TransactionIndexedResult" &&
+      !data?.hasTxHashBeenIndexed.indexed)
+
   return (
     <div className="p-5 font-bold text-center">
-      {loading ||
-      (data?.hasTxHashBeenIndexed.__typename === "TransactionIndexedResult" &&
-        !data?.hasTxHashBeenIndexed.indexed) ? (
+      {isLoading ? (
         <div className="space-y-3">
           <Spinner className="mx-auto" variant="secondary" />
           <div>Account creation in progress, please wait!</div>
