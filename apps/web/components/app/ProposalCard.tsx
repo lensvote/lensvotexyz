@@ -1,8 +1,9 @@
 import React from "react"
 import { Button } from "@components/UI/Button"
 import { Card } from "@components/UI/Card"
-import { GovernorProposal } from "@lib/hooks/useGovernorContract"
+import { GovernorProposal, ProposalState } from "@lib/hooks/useGovernorContract"
 import { BigNumber, BigNumberish } from "ethers"
+import { useProposalState } from "@lib/hooks/useProposalState"
 
 type ProposalCardProps = {
   proposal: GovernorProposal
@@ -15,15 +16,11 @@ const getPercentage = (val: BigNumberish, total: BigNumberish) => {
 }
 
 const ProposalCard = ({ proposal, displayVote }: ProposalCardProps) => {
-  const {
-    agreeVotes,
-    againstVotes,
-    abstainVotes,
-    id,
-    description,
-    proposer,
-    status,
-  } = proposal
+  const { agreeVotes, againstVotes, abstainVotes, id, description, proposer } =
+    proposal
+
+  const status = useProposalState(proposal)
+
   const totalVotes = BigNumber.from(agreeVotes)
     .add(abstainVotes)
     .add(againstVotes)
@@ -40,9 +37,11 @@ const ProposalCard = ({ proposal, displayVote }: ProposalCardProps) => {
               @{proposer.id.slice(0, 4)}...{proposer.id.slice(-4)}
             </p>
           </div>
-          <Button className="lowercase" size="sm" variant="success" disabled>
-            {status}
-          </Button>
+          {typeof status !== "undefined" && (
+            <Button className="lowercase" size="sm" variant="success" disabled>
+              {ProposalState[status]}
+            </Button>
+          )}
         </div>
 
         <p className="text-sm text-[#18191C]">

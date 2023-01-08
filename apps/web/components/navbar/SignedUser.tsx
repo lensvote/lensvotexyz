@@ -62,7 +62,7 @@ const SignedUser = () => {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="py-2 absolute z-10 right-0 transform -translate-x-[calc(1rem)] mt-2 w-32 origin-top-right rounded-md bg-white border-[#EFF4F4] border shadow-[0px_4px_12px_-7px_#00000040] ring-1 ring-black ring-opacity-5 focus:outline-none">
+        <Menu.Items className="py-2 absolute z-10 right-0 mt-2 w-32 origin-top-right rounded-md bg-white border-[#EFF4F4] border shadow-[0px_4px_12px_-7px_#00000040] ring-1 ring-black ring-opacity-5 focus:outline-none">
           {/* Sign out */}
           <div className="px-2">
             <Menu.Item>

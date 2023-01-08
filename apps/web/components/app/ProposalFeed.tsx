@@ -15,10 +15,15 @@ const ProposalFeed = () => {
 
   return (
     <Card>
-      {proposals?.map((proposal: GovernorProposal) => (
-        <NextLink href={`/proposal/${proposal.id}`} key={proposal.id}>
-          <ProposalCard proposal={proposal} displayVote />
-        </NextLink>
+      {proposals?.map((proposal: GovernorProposal, index: number) => (
+        <>
+          <NextLink href={`/proposal/${proposal.id}`} key={proposal.id}>
+            <ProposalCard proposal={proposal} displayVote />
+          </NextLink>
+          {index !== proposals.length - 1 && (
+            <div className="h-[.5px] bg-[#C8C9CC]" />
+          )}
+        </>
       ))}
     </Card>
   )
