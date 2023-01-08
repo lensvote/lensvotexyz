@@ -1,6 +1,7 @@
 import { useCallback } from "react"
 import { useContractWrite } from "wagmi"
 import { InformationCircleIcon } from "@heroicons/react/20/solid"
+import { parseUnits } from "ethers/lib/utils.js"
 import { Button } from "@components/UI/Button"
 import { LENSVOTE_GOVERNANCE_FACTORY } from "@data/index"
 import { useAppPersistStore } from "@store/app"
@@ -27,9 +28,9 @@ const EnableGovernance = () => {
     return createGovernor?.({
       // Cast it to any since this args is currently working, the inferred typing of wagmi is wrong
       recklesslySetUnpreparedArgs: createGovernanceArgs as any,
-      // recklesslySetUnpreparedOverrides: {
-      //   gasLimit: parseUnits("150000"),
-      // },
+      recklesslySetUnpreparedOverrides: {
+        gasLimit: parseUnits("150000"),
+      },
     })
   }, [createGovernor, profileId])
 
