@@ -7,6 +7,7 @@ const LoginButton = () => {
   const [showLoginModal, setShowLoginModal] = useState(false)
 
   const closeModal = () => setShowLoginModal(false)
+  const openModal = () => setShowLoginModal(true)
 
   return (
     <>
@@ -19,7 +20,7 @@ const LoginButton = () => {
       </Modal>
       <Button
         className="text-sm"
-        onClick={closeModal}
+        onClick={openModal}
       >
         Login
       </Button>
