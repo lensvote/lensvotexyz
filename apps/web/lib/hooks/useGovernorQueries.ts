@@ -51,6 +51,14 @@ const ProposalDocument = gql`
         id
         profileId
       }
+      votes {
+        id
+        power
+        support
+        voter {
+          id
+        }
+      }
       agreeVotes
       againstVotes
       abstainVotes

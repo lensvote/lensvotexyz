@@ -5,11 +5,11 @@ import VoteCard from "@components/proposal/VoteCard"
 import {
   GovernorProposal,
   ProposalActions,
-  useUserGovernor,
 } from "@lib/hooks/useGovernorContract"
 import ExtraActionsCard from "@components/proposal/ExtraActionsCard"
 import ProposalDetailCard from "@components/proposal/ProposalDetailCard"
 import { useProposalQuery } from "@lib/hooks/useGovernorQueries"
+import VotersCard from "@components/proposal/VotersCard"
 
 const ProposalDetail = () => {
   const { query } = useRouter()
@@ -38,12 +38,13 @@ const ProposalDetail = () => {
   ]
 
   return (
-    <div className="bg-[#F4F5F6] h-[80vh] p-3">
+    <div className="bg-[#F4F5F6] min-h-[80vh] p-3">
       <div className="max-w-4xl mx-auto">
         <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-3 lg:gap-8">
           <div className="col-span-2 space-y-4">
             <ProposalCard proposal={proposal} />
             <VoteCard proposal={proposal} />
+            <VotersCard votes={proposal.votes} />
           </div>
           <div className="col-span-1 space-y-4">
             <ProposalDetailCard proposal={proposal} actions={actions} />

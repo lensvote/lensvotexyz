@@ -95,6 +95,17 @@ export type Proposer = {
   id: Address
 }
 
+export type Vote = {
+  id: string
+  // power is a number in string
+  power: string
+  support: string
+  voter: {
+    // Voter address
+    id: string
+  }
+}
+
 export type GovernorProposal = Readonly<{
   // number that +1 start from 1
   id: `${string}|${Address}`
@@ -116,6 +127,7 @@ export type GovernorProposal = Readonly<{
   values: ProposalActions[1]
   signatures: ProposalActions[2]
   calldatas: ProposalActions[3]
+  votes: Vote[]
 }>
 
 export type ProposeArgs = [
