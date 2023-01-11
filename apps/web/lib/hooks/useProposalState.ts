@@ -1,10 +1,11 @@
 import { BigNumber } from "ethers"
 import { useEffect, useState } from "react"
 import { useBlockNumber, useProvider } from "wagmi"
+import { Duration } from "@lib/time"
 import { GovernorProposal, ProposalState } from "./useGovernorContract"
 
 // 14 days in second
-const TIMELOCK_GRACE_PERIOD = 14 * 60 * 60 * 60 * 24
+const TIMELOCK_GRACE_PERIOD = 14 * Duration.day
 
 export const getProposalState = async (
   proposal: GovernorProposal,

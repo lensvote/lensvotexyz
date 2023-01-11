@@ -22,7 +22,6 @@ const VoteCard = ({ proposal }: VoteCardProps) => {
       return
     }
     const [voteId] = proposal.id.split("|")
-    console.log("🚀 ~ file: VoteCard.tsx:25 ~ handleVote ~ voteId", voteId)
     try {
       setVotingAction(action)
       setIsVoting(true)

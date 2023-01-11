@@ -5,21 +5,12 @@ import { defaultAbiCoder, isAddress, parseEther } from "ethers/lib/utils.js"
 import { Button } from "@components/UI/Button"
 import { ProposeArgs, useUserGovernor } from "@lib/hooks/useGovernorContract"
 import { DUMMY_TOKEN_ADDRESS, ZERO_ADDRESS } from "@data/index"
+import { Duration } from "@lib/time"
 
 enum ProposalAction {
   // transferNativeTokensToSingle,
   transferErc20ToSingle,
   transferZeroEthers,
-}
-
-// In seconds
-// TODO: Use a date library
-enum Duration {
-  threeMinutes = 60 * 3,
-  hour = 60 * 60,
-  day = 60 * 60 * 24,
-  week = 60 * 60 * 24 * 7,
-  month = 60 * 60 * 24 * 7 * 30,
 }
 
 type ProposalFormData = {
@@ -147,10 +138,7 @@ const CreateProposal = () => {
         ]
 
         const latestProposalId = await createProposal(...proposeArgs)
-        console.log(
-          "🚀 ~ file: Proposal created, id - ",
-          latestProposalId,
-        )
+        console.log("🚀 ~ file: Proposal created, id - ", latestProposalId)
         return
       }
 
@@ -209,10 +197,7 @@ const CreateProposal = () => {
         ]
 
         const latestProposalId = await createProposal(...proposeArgs)
-        console.log(
-          "🚀 ~ file: Proposal created, id - ",
-          latestProposalId,
-        )
+        console.log("🚀 ~ file: Proposal created, id - ", latestProposalId)
         return
       }
     }
@@ -258,7 +243,8 @@ const CreateProposal = () => {
                             Transfer matics from treasury to a single address
                           </option> */}
                           <option value={ProposalAction.transferZeroEthers}>
-                            Transfer 0 MATICs
+                            Non-token relatives, e.g. {'"'}What should we eat
+                            tonight?{'"'}
                           </option>
                           <option value={ProposalAction.transferErc20ToSingle}>
                             Transfer LINKs from treasury to a single address

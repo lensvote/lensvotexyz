@@ -31,12 +31,12 @@ const EnableGovernance = () => {
 
     try {
       setIsEnablingGovernor(true)
-      const createGovernanceArgs = [profileId, timelockDelay] as const
+      const createGovernanceArgs = [profileId, timelockDelay]
       const createGovernorResult = await createGovernor({
         // Cast it to any since this args is currently working, the inferred typing of wagmi is wrong
         recklesslySetUnpreparedArgs: createGovernanceArgs as any,
         recklesslySetUnpreparedOverrides: {
-          gasLimit: BigNumber.from(33333333),
+          gasLimit: BigNumber.from(50000000),
         },
       })
       await createGovernorResult.wait()
