@@ -119,16 +119,6 @@ const Follow: FC<Props> = ({
       return
     }
 
-    createViaProxyAction({
-      request: {
-        follow: {
-          freeFollow: {
-            profileId: profile?.id,
-          },
-        },
-      },
-    })
-
     if (profile?.followModule) {
       createFollowTypedData({
         variables: {

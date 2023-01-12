@@ -75,7 +75,6 @@ const Unfollow: FC<Props> = ({
         try {
           const { typedData, id } = createUnfollowTypedData
           const signature = await signTypedDataAsync(getSignature(typedData))
-
           setWriteLoading(true)
           try {
             if (!RELAY_ON) {
@@ -86,12 +85,16 @@ const Unfollow: FC<Props> = ({
               await burnWithSig(signature, typedData)
             }
             // do something when successed
-          } catch {
+          } catch (error) {
+            console.log("💣 ~ file: Unfollow.tsx:90 ~ onCompleted: ~ error", error)
             // do something when errror
           } finally {
             setWriteLoading(false)
           }
-        } catch {}
+        } catch (error) {
+          console.log("💣 ~ file: Unfollow.tsx:96 ~ onCompleted: ~ error", error)
+          // do something when errror
+        }
       },
       update: updateCache,
     })
